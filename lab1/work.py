@@ -20,6 +20,7 @@ def main():
     #plot_from_df(util.prep_work_GMM())
     #plot_from_df(util.plot_letter_data('A'))
     data = util.get_letter_data('A')
+    data = util.get_letter_data('A',amerge = True)
     #for item in data:
     #    print(item)
     labs = util.fitpredict_gmm(data)

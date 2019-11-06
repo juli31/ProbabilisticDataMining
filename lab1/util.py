@@ -23,11 +23,13 @@ def plot_letter_data(letter):
                 ys.append(data[1])
     return df_fromarr(['x','y'],xs,ys)
 
-def get_letter_data(letter):
+def get_letter_data(letter, amerge = False):
     data = np.empty((1,2))
     files = [f for f in os.listdir("./Unistroke/") if ((f[0] == letter) and (f[1] != 'm'))]
     for item in files:
         data = np.vstack((data, np.loadtxt("./Unistroke/"+item)))
+    if amerge:
+        data = np.loadtxt("./Unistroke/Amerge.txt")
     return data
 
 def fitpredict_gmm(data):
