@@ -3,34 +3,41 @@ import pandas as pd
 import altair as alt
 import util
 from sklearn import mixture
+import os
 
-def plot_from_df(df):
-    if len(list(df))>2:
-        chart = alt.Chart(df, height = 500, width = 500).mark_point().encode(
-                alt.X("x:Q"),
-                alt.Y("y:Q"),
-                alt.Color("class:N")).interactive()
-    else:
-        chart = alt.Chart(df,height = 500, width = 500).mark_point().encode(
-                alt.X('x:Q'),
-                alt.Y('y:Q')).interactive()
+def scatter_from_df(*args):
+    charts = []
+    for item in args:
+        if len(list(item))>2:
+            charts.append(alt.Chart(item, height = 500, width = 500).mark_point(filled = True).encode(
+                    alt.X("x:Q"), alt.Y("y:Q"), alt.Color("class:N")).interactive())
+        else:
+            charts.append(alt.Chart(item,height = 500, width = 500).mark_point(filled = True).encode(
+                    alt.X('x:Q'),alt.Y('y:Q')).interactive())
+    for i in range(len(charts)):
+        if i==0: chart = charts[i]
+        else: chart = chart | charts[i]
+    chart = chart.configure_legend(clipHeight = 10, titleFontSize= 17, \
+                            labelFontSize = 17, symbolSize = 50, \
+                            symbolStrokeWidth = 3)\
+            .configure_axis(labelFontSize=17, titleFontSize=17)
     chart.serve()
 
 def main():
-    #plot_from_df(util.prep_work_GMM())
-    #plot_from_df(util.plot_letter_data('A'))
-    data = util.get_letter_data('A')
-    data = util.get_letter_data('A',amerge = True)
-    #for item in data:
-    #    print(item)
-    labs = util.fitpredict_gmm(data)
-    xs = []
-    ys = []
-    for item in data:
-        xs.append(float(item[0]))
-        ys.append(float(item[1]))
-    df = util.df_fromarr(['x','y','label'],xs,ys,list(labs))
-    plot_from_df(util.df_fromarr(['x','y','class'],xs,ys,list(labs)))
+    '''1. Preliminary Questions'''
+    scatter_from_df(util.prep_work_GMM())
+    A_data = util.get_data("./Unistroke/",[f for f in os.listdir("./Unistroke/") if ((f[0] == 'A') and (f[1] != 'm'))])
+    scatter_from_df(util.df_fromarr(['x','y'],[x[0] for x in A_data],[x[1] for x in A_data]))
+
+    '''2. Data Analysis, Gaussian Models'''
+    scatter_from_df(util.df_fromarr(['x','y'],[x[0] for x in A_data],[x[1] for x in A_data]),\
+                    util.df_fromarr(['x','y','class'],[x[0] for x in A_data],[x[1] for x in A_data],\
+                    list(mixture.GaussianMixture(n_components = 2).fit_predict(A_data))))
+    Amerge_data = util.get_data("./Unistroke/", ["Amerge.txt",])
+    scatter_from_df(util.df_fromarr(['x','y'],[x[0] for x in Amerge_data],[x[1] for x in Amerge_data]),\
+                    util.df_fromarr(['x','y','class'],[x[0] for x in Amerge_data],[x[1] for x in Amerge_data],\
+                    list(mixture.GaussianMixture(n_components = 2).fit_predict(Amerge_data))))
+
 
 if __name__=='__main__':
     main()
