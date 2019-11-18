@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import os
 from sklearn import mixture
+from matplotlib import pyplot as plt
 
 def df_fromarr(names, *args):
     df = pd.DataFrame()
@@ -28,3 +29,20 @@ def prep_work_GMM():
     ys = list(y) + list(y2)
     labs = lab1 + lab2
     return df_fromarr(['x','y','class'], xs,ys,labs)
+
+def plot_pdf(model, values, labels, comp):
+    x = np.linspace(-1.5,1.5)
+    y = np.linspace(-1.5,1.5)
+    X, Y = np.meshgrid(x,y)
+    XX = np.array([X.ravel(), Y.ravel()]).T
+    Z = -model.score_samples(XX)
+    Z = Z.reshape(X.shape)
+    # plot contour
+    CS = plt.contour(X, Y, Z, norm=LogNorm(vmin=1.0, vmax=1000.0),
+                     levels=np.logspace(0, 3, 10))
+    CB = plt.colorbar(CS, shrink=0.8, extend='both')
+
+    plt.scatter(data[:, 0], data[:, 1],.8, c=labels)
+    plt.title('Negative log-likelihood predicted by a GMM')
+    plt.axis('tight')
+    plt.show()
