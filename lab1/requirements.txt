@@ -2,4 +2,7 @@ pandas
 numpy
 sklearn
 altair
+vega
+vega_datasets
+notebook
 matplotlib
