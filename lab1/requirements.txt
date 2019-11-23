@@ -6,3 +6,4 @@ vega
 vega_datasets
 notebook
 matplotlib
+scipy

@@ -7,7 +7,7 @@ from matplotlib.colors import LogNorm
 from matplotlib import pyplot as plt
 import altair as alt
 
-def plot(*args):
+def plot(*args, **kwargs):
     charts = []
     for item in args:
         if type(item) is str:
@@ -51,7 +51,7 @@ def mean_variance(df, **kwargs):
 Mean of class 0 = {}, (co)-variance of class 0 = {}\n\
 Mean of class 1 = {}, (co)-variance of class 1 = {}\n".format(zeromean,np.round(covone,2).tolist(),onemean,np.round(covzero,2).tolist()))
 
-def plot_pdf(model, data, labels):
+def two_dim_contour(model, data):
     maxi= max(x[0] for x in data)
     mini = min(x[0] for x in data)
     maxi = maxi + (maxi-mini)/8
@@ -60,13 +60,4 @@ def plot_pdf(model, data, labels):
     XX = np.array([x.ravel(), y.ravel()]).T
     z = -model.score_samples(XX)
     z = z.reshape(x.shape)
-    CS = plt.contour(x, y, z, norm=LogNorm(vmin=1.0, vmax=1000.0),
-                    levels=np.logspace(0, 3, 10))
-    CB = plt.colorbar(CS, shrink=0.8, extend='both')
-    plt.scatter(data[:, 0], data[:, 1],.8, c=labels)
-    plt.title('Negative log-likelihood predicted by a GMM')
-    plt.axis('tight')
-    plt.show()
-
-def transform_points(data):
-    x = 1
+    return x,y,z
