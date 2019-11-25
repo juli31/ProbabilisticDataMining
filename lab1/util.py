@@ -52,11 +52,15 @@ Mean of class 0 = {}, (co)-variance of class 0 = {}\n\
 Mean of class 1 = {}, (co)-variance of class 1 = {}\n".format(zeromean,np.round(covone,2).tolist(),onemean,np.round(covzero,2).tolist()))
 
 def two_dim_contour(model, data):
-    maxi= max(x[0] for x in data)
-    mini = min(x[0] for x in data)
-    maxi = maxi + (maxi-mini)/8
-    mini = mini - (maxi-mini)/8
-    x, y = np.meshgrid(np.linspace(mini,maxi),np.linspace(mini,maxi))
+    max_x= max(x[0] for x in data)
+    min_x = min(x[0] for x in data)
+    max_x = max_x + (max_x-min_x)/8
+    min_x = min_x - (max_x-min_x)/8 
+    max_y= max(x[1] for x in data)
+    min_y = min(x[1] for x in data)
+    max_y = max_y + (max_y-min_y)/8
+    min_y = min_y - (max_y-min_y)/8
+    x, y = np.meshgrid(np.linspace(min_x,max_x),np.linspace(min_x,max_x))
     XX = np.array([x.ravel(), y.ravel()]).T
     z = -model.score_samples(XX)
     z = z.reshape(x.shape)
